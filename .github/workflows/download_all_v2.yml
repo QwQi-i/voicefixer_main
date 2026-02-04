@@ -1,0 +1,28 @@
+name: VoiceFixer_Full_Weights_Downloader
+on:
+  workflow_dispatch: # 允许你手动点击按钮触发
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create Structure
+        run: |
+          mkdir -p voicefixer_weights/synthesis_module/44100
+          mkdir -p voicefixer_weights/analysis_module/checkpoints
+          mkdir -p voicefixer_weights/restorer
+
+      - name: Download Vocoder (TFGAN)
+        run: wget "https://zenodo.org/record/5469951/files/model.ckpt-1490000_trimed.pt?download=1" -O voicefixer_weights/synthesis_module/44100/model.ckpt-1490000_trimed.pt
+
+      - name: Download Main Structure (vf.ckpt)
+        run: wget "https://zenodo.org/record/5600188/files/vf.ckpt?download=1" -O voicefixer_weights/analysis_module/checkpoints/vf.ckpt
+
+      - name: Download Restorer (voicefixer.ckpt)
+        run: wget "https://zenodo.org/record/5609162/files/voicefixer.ckpt?download=1" -O voicefixer_weights/restorer/voicefixer.ckpt
+
+      - name: Pack and Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: VoiceFixer_All_In_One
+          path: voicefixer_weights/
